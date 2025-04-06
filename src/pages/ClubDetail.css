@@ -1,0 +1,37 @@
+.club-detail {
+    padding: 20px;
+  }
+  
+  .back-button {
+    background: #eee;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  
+  .banner {
+    background-size: cover;
+    background-position: center;
+    padding: 60px 20px;
+    color: white;
+    text-align: center;
+    position: relative;
+    border-radius: 12px;
+  }
+  
+  .club-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background: white;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .club-description {
+    font-size: 18px;
+    margin-top: 20px;
+  }
+  
