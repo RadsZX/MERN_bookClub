@@ -1,146 +1,124 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Home.css";
-
-const books = [
-  {
-    title: "The Silent Patient",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781250301697-L.jpg",
-  },
-  {
-    title: "These Violent Delights",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781534457720-L.jpg",
-  },
-  {
-    title: "Normal People",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780571334650-L.jpg",
-  },
-  {
-    title: "The Vanishing Half",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780525536291-L.jpg",
-  },
-  {
-    title: "Black Sun",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781534437678-L.jpg",
-  },
-  {
-    title: "My Year of Rest and Relaxation",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780525522119-L.jpg",
-  },
-  {
-    title: "Blood of Hercules",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781335474735-L.jpg",
-  },
-  {
-    title: "Terror in the Attic",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780749746705-L.jpg",
-  },
-  {
-    title: "Matilda",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780140328721-L.jpg",
-  },
-  {
-    title: "The Midnight Library",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg",
-  },
-  {
-    title: "It Ends with Us",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781501110368-L.jpg",
-  },
-  {
-    title: "Where the Crawdads Sing",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780735219106-L.jpg",
-  },
-  {
-    title: "Verity",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781538724736-L.jpg",
-  },
-  {
-    title: "The Alchemist",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780061122415-L.jpg",
-  },
-  {
-    title: "Educated",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg",
-  },
-  {
-    title: "The Book Thief",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780375842207-L.jpg",
-  },
-  {
-    title: "Circe",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780316556347-L.jpg",
-  },
-  {
-    title: "Little Women",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780147514011-L.jpg",
-  },
-  {
-    title: "The Seven Husbands of Evelyn Hugo",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781501161933-L.jpg",
-  },
-  {
-    title: "A Man Called Ove",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9781476738024-L.jpg",
-  },
-  {
-    title: "The Great Gatsby",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg",
-  },
-  {
-    title: "Pride and Prejudice",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780141439519-L.jpg",
-  },
-  {
-    title: "1984",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg",
-  },
-  {
-    title: "The Hobbit",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780345339683-L.jpg",
-  },
-  {
-    title: "The Catcher in the Rye",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg",
-  },
-  {
-    title: "To Kill a Mockingbird",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg",
-  },
-  {
-    title: "The Fault in Our Stars",
-    imageUrl: "https://covers.openlibrary.org/b/isbn/9780525478812-L.jpg",
-  }
-];
+import { books } from "../components/books";
 
 const Home = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [bookDescription, setBookDescription] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const fetchBookDetails = async (isbn) => {
+    if (!isbn) {
+      setBookDescription("No ISBN provided.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
+      const data = await response.json();
+
+      if (data.description) {
+        const description =
+          typeof data.description === "string"
+            ? data.description
+            : data.description.value;
+        setBookDescription(description);
+      } else if (data.notes) {
+        setBookDescription(data.notes);
+      } else if (data.works && data.works.length > 0) {
+        const workRes = await fetch(`https://openlibrary.org${data.works[0].key}.json`);
+        const workData = await workRes.json();
+        if (workData.description) {
+          const workDescription =
+            typeof workData.description === "string"
+              ? workData.description
+              : workData.description.value;
+          setBookDescription(workDescription);
+        } else {
+          setBookDescription("No description available.");
+        }
+      } else {
+        setBookDescription("No description available.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch book details", error);
+      setBookDescription("Failed to fetch book description.");
+    }
+  };
+
+  const handleBookClick = (book) => {
+    setSelectedBook(book);
+    setIsModalOpen(true);
+    fetchBookDetails(book.isbn);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedBook(null);
+    setBookDescription("");
+  };
+
   return (
     <div className="home-container">
       <h2>Welcome to the Bookish!</h2>
-      <p>
-        Join a club, participate in discussions, track your reading progress, and
-        connect with fellow book lovers!
-      </p>
+      <p>Join a club, track reading progress & connect with book lovers!</p>
+
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search books"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="search-input"
+        />
+      </div>
 
       <div className="featured-books">
         <h3>Featured Books</h3>
         <div className="book-list">
-          {books.map((book, index) => (
-            <div key={index} className="book-item">
-              <img
-                src={book.imageUrl}
-                alt={book.title}
-                className="book-cover"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src =
-                    "https://via.placeholder.com/150x220?text=No+Cover";
-                }}
-              />
-              <p>{book.title}</p>
-            </div>
-          ))}
+          {filteredBooks.length > 0 ? (
+            filteredBooks.map((book, index) => (
+              <div key={index} className="book-item" onClick={() => handleBookClick(book)}>
+                <img
+                  src={book.imageUrl}
+                  alt={book.title}
+                  className="book-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150x220?text=No+Cover";
+                  }}
+                />
+                <p>{book.title}</p>
+              </div>
+            ))
+          ) : (
+            <p>No books found for "{searchQuery}"</p>
+          )}
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && selectedBook && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="close-button" onClick={closeModal}>
+              X
+            </button>
+            <h2>{selectedBook.title}</h2>
+            <img src={selectedBook.imageUrl} alt={selectedBook.title} className="book-cover" />
+            <p className="description">
+              {typeof bookDescription === "string"
+                ? bookDescription
+                : "No description available."}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
