@@ -63,6 +63,36 @@ const Home = () => {
     setBookDescription("");
   };
 
+  const addToLibrary = async () => {
+    if (!selectedBook) return;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/library", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: selectedBook.title,
+          imageUrl: selectedBook.imageUrl,
+          isbn: selectedBook.isbn,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.status === 201) {
+        alert("Book added to your library!");
+      } else if (res.status === 409) {
+        alert("This book is already in your library.");
+      } else {
+        alert("Something went wrong.");
+      }
+    } catch (error) {
+      console.error("Error adding book to library:", error);
+      alert("Error adding book to library.");
+    }
+  };
+
   return (
     <div className="home-container">
       <h2>Welcome to the Bookish!</h2>
@@ -116,6 +146,9 @@ const Home = () => {
                 ? bookDescription
                 : "No description available."}
             </p>
+            <button className="add-button" onClick={addToLibrary}>
+              Add to Library
+            </button>
           </div>
         </div>
       )}
