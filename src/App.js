@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Clubs from "./pages/Clubs"; 
 import ClubDetail from "./pages/ClubDetail";
+import Community from "./pages/Community";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/clubs" element={<Clubs />} />
         <Route path="/clubs/:clubId" element={<ClubDetail />} />
         <Route path="/clubs/:clubSlug" element={<ClubDetail />} />
+        <Route path="/community" element={<Community />} />
       </Routes>
     </Router>
   );
