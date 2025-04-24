@@ -1,4 +1,4 @@
-export const books = [
+const books = [
   {
     title: "The Silent Patient",
     imageUrl: "https://covers.openlibrary.org/b/isbn/9781250301697-L.jpg",
@@ -237,3 +237,4 @@ export const books = [
     isbn: "9780525478812",
   }
 ];
+module.exports = { books };

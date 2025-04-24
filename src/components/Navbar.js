@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="navbar-modern">
       <div className="navbar-left">
         <Link to="/" className="brand" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-          <img src="logo.png" alt="Logo" style={{ height: "80px", marginRight: "10px" }} />
+          <img src="/logo.png" alt="Logo" style={{ height: "80px", marginRight: "10px" }} />
           <h2 style={{ margin: 0, color: "white" }}>Bookish</h2>
         </Link>
       </div>

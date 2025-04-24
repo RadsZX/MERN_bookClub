@@ -46,7 +46,7 @@ const Community = () => {
     try {
       await axios.post(`http://localhost:5000/api/discussions/${id}/replies`, {
         content: replyContent,
-        username: "Isha Patel", // Replace this with actual user info if available
+        username: "Anonymous", // Replace this with actual user info if available
       });
 
       setReplyText((prev) => ({ ...prev, [id]: "" }));
