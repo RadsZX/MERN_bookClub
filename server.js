@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-const mongoURI = "mongodb+srv://radhikaap583:book-club25@bookclub.fbhhlwn.mongodb.net/?retryWrites=true&w=majority&appName=BookClub";
+const mongoURI = "YOUR_MONGO_URI";
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -148,7 +148,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ Upload route - this is what you're using
+
 app.post("/api/users/:id/profile-pic", upload.single("profilePic"), async (req, res) => {
   try {
     const { id } = req.params;
